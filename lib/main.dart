@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.compact,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const WatchScreen(),
     );
@@ -64,47 +64,61 @@ class _TimerScreenState extends State<TimerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isAmbientMode = widget.mode == WearMode.ambient;
+    Color primaryColor =
+        isAmbientMode ? Color.fromARGB(255, 0, 212, 46) : Colors.white;
+    Color secondaryColor = isAmbientMode
+        ? Color.fromARGB(255, 0, 212, 46)
+        : (Colors.grey[700] ?? Colors.grey);
+    Color iconColor = isAmbientMode
+        ? Color.fromARGB(255, 0, 212, 46)
+        : (_status == "Stop" ? Colors.red : (Colors.grey[700] ?? Colors.grey));
+
     return Scaffold(
       backgroundColor:
-          widget.mode == WearMode.active ? Colors.black : Colors.black,
+          isAmbientMode ? Colors.black : (Colors.grey[900] ?? Colors.black),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Center(
+            Center(
               child: Text(
                 'Cronómetro',
                 style: TextStyle(
-                  color: Color.fromARGB(255, 201, 201, 201),
-                  fontSize: 12.0,
+                  color: primaryColor,
+                  fontSize: 14.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(height: .1),
-            const Center(
-              child: Icon(Icons.timer, size: 35.0, color: Colors.green),
+            const SizedBox(height: 8),
+            Center(
+              child: Icon(
+                Icons.timer,
+                size: 40.0,
+                color: iconColor,
+              ),
             ),
-            const SizedBox(height: .1),
+            const SizedBox(height: 8),
             Center(
               child: Text(
                 _strCount,
                 style: TextStyle(
-                  color: Colors.green,
-                  fontSize: 25.0,
+                  color: primaryColor,
+                  fontSize: 28.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(height: .1),
-            _buildWidgetButton(),
+            const SizedBox(height: 8),
+            _buildWidgetButton(secondaryColor),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildWidgetButton() {
+  Widget _buildWidgetButton(Color buttonColor) {
     if (widget.mode == WearMode.active) {
       return Row(
         mainAxisSize: MainAxisSize.max,
@@ -112,9 +126,9 @@ class _TimerScreenState extends State<TimerScreen> {
         children: <Widget>[
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 188, 188, 188),
-              foregroundColor: Colors.black,
-              minimumSize: Size(.5, .05),
+              backgroundColor: buttonColor,
+              foregroundColor: Colors.white,
+              minimumSize: Size(60, 30),
             ),
             onPressed: () {
               if (_status == "Start") {
@@ -132,8 +146,8 @@ class _TimerScreenState extends State<TimerScreen> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 188, 188, 188),
-              minimumSize: Size(.5, .05),
+              backgroundColor: Colors.red[400],
+              minimumSize: Size(60, 30),
             ),
             onPressed: () {
               if (_timer != true) {
